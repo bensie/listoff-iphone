@@ -6,6 +6,7 @@
 
 @synthesize todoId;
 @synthesize name;
+@synthesize itemsCount;
 @synthesize updatedAt;
 @synthesize createdAt;
 
@@ -17,6 +18,7 @@
 - (void) dealloc {
     [todoId release];
     [name release];
+	[itemsCount release];
     [updatedAt release];
     [createdAt release];
 	[super dealloc];

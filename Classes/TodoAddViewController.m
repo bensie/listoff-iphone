@@ -27,7 +27,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"Add To-Do List";
+    self.title = @"Add List";
 
     self.tableView.allowsSelection = NO;
     self.tableView.backgroundColor = [UIColor colorWithWhite:0.831 alpha:1.0];

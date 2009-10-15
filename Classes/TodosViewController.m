@@ -101,8 +101,7 @@
 
     Todo *todo = [todos objectAtIndex:indexPath.row];
     cell.textLabel.text = todo.name;
-	cell.detailTextLabel.text = [NSString stringWithFormat:@"(%d items)", 
-								 [[todo findAllItems] count]];
+	cell.detailTextLabel.text = [NSString stringWithFormat: @"(%@ items)", todo.itemsCount];
     
     return cell;
 }
