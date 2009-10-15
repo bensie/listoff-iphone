@@ -7,13 +7,11 @@
 @interface TodoAddViewController ()
 - (void)createRemoteTodo;
 - (UITextField *)newNameField;
-- (UITextField *)newAmountField;
 @end
 
 @implementation TodoAddViewController
 
 @synthesize nameField;
-@synthesize amountField;
 @synthesize todo;
 
 - (id)initWithTodo:(Todo *)aTodo {
@@ -36,8 +34,6 @@
 
     nameField = [self newNameField];
     [nameField becomeFirstResponder];
-
-    amountField = [self newAmountField];
     
     UIBarButtonItem *cancelButton = [UIHelpers newCancelButton:self];
     self.navigationItem.leftBarButtonItem = cancelButton;
@@ -58,7 +54,6 @@
 
 - (void)dealloc {
     [nameField release];
-    [amountField release];
     [todo release];
     [super dealloc];
 }
@@ -84,9 +79,6 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField { 
     [textField resignFirstResponder];
 	if (textField == nameField) {
-        [amountField becomeFirstResponder];
-    }
-	if (textField == amountField) {
         [self save];
     }
 	return YES;
@@ -94,7 +86,7 @@
 
 - (IBAction)textFieldChanged:(id)sender {
     BOOL enableSaveButton = 
-        ([self.nameField.text length] > 0) && ([self.amountField.text length] > 0);
+        ([self.nameField.text length] > 0);
     [self.navigationItem.rightBarButtonItem setEnabled:enableSaveButton];
 }
 
@@ -103,7 +95,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView 
  numberOfRowsInSection:(NSInteger)section {
-    return 2;
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView 
@@ -115,8 +107,6 @@
     
     if (indexPath.row == 0)  {
         [cell.contentView addSubview:nameField];	
-    } else { 
-        [cell.contentView addSubview:amountField];	
     }
     
     return cell;
@@ -142,17 +132,7 @@
 - (UITextField *)newNameField {
     UITextField *field = [UIHelpers newTableCellTextField:self];
     field.returnKeyType = UIReturnKeyNext;
-    field.placeholder = @"Name";
-    [field addTarget:self 
-              action:@selector(textFieldChanged:) 
-    forControlEvents:UIControlEventEditingChanged];
-    return field;
-}
-
-- (UITextField *)newAmountField {
-    UITextField *field = [UIHelpers newTableCellTextField:self];
-    field.placeholder = @"Amount";
-    field.keyboardType = UIKeyboardTypeNumberPad;
+    field.placeholder = @"Give this list a name...";
     [field addTarget:self 
               action:@selector(textFieldChanged:) 
     forControlEvents:UIControlEventEditingChanged];

@@ -141,6 +141,7 @@ titleForFooterInSection:(NSInteger)section {
     field.autocapitalizationType = UITextAutocapitalizationTypeNone;
     field.autocorrectionType = UITextAutocorrectionTypeNo;
     field.returnKeyType = UIReturnKeyNext;
+	field.keyboardType = UIKeyboardTypeEmailAddress;
     [field addTarget:self 
               action:@selector(textFieldChanged:) 
     forControlEvents:UIControlEventEditingChanged];
