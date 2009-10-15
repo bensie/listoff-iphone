@@ -6,14 +6,9 @@
 
 @synthesize itemId;
 @synthesize todoId;
-@synthesize name;
-@synthesize amount;
+@synthesize content;
 @synthesize createdAt;
 @synthesize updatedAt;
-
-- (NSString *)amountAsCurrency {
-    return [CurrencyHelpers numberToCurrency:self.amount];
-}
 
 #pragma mark ObjectiveResource overrides to handle nested resources
 
@@ -50,8 +45,7 @@
 - (void)dealloc {
     [itemId release];
     [todoId release];
-    [name release];
-    [amount release];
+    [content release];
     [createdAt release];
     [updatedAt release];
 	[super dealloc];

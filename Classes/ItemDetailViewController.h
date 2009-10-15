@@ -3,13 +3,11 @@
 @class Item;
 
 @interface ItemDetailViewController : UITableViewController <UITextFieldDelegate> {
-    UITextField *nameField;
-    UITextField *amountField;
+    UITextField *contentField;
     Item     *item;
 }
 
-@property (nonatomic, retain) UITextField *nameField;
-@property (nonatomic, retain) UITextField *amountField;
+@property (nonatomic, retain) UITextField *contentField;
 @property (nonatomic, retain) Item *item;
 
 - (id)initWithItem:(Item *)item;

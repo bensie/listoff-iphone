@@ -6,15 +6,13 @@
 
 @interface ItemDetailViewController ()
 - (void)saveRemoteItem;
-- (UITextField *)newNameField;
-- (UITextField *)newAmountField;
+- (UITextField *)newContentField;
 @end
 
 @implementation ItemDetailViewController
 
 @synthesize item;
-@synthesize nameField;
-@synthesize amountField;
+@synthesize contentField;
 
 - (id)initWithItem:(Item *)anItem {
 	if (self = [super initWithStyle:UITableViewStyleGrouped]) {
@@ -32,9 +30,8 @@
     self.tableView.allowsSelection = NO;
     self.tableView.backgroundColor = [UIColor colorWithWhite:0.831 alpha:1.0];
 
-    nameField = [self newNameField];
-    [nameField becomeFirstResponder];
-    amountField = [self newAmountField];
+    contentField = [self newContentField];
+    [contentField becomeFirstResponder];
     
     UIBarButtonItem *cancelButton = [UIHelpers newCancelButton:self];
     self.navigationItem.leftBarButtonItem = cancelButton;
@@ -50,8 +47,7 @@
     
     if (item.itemId) {
         self.title = @"Edit Item";
-        nameField.text = item.name;
-        amountField.text = [CurrencyHelpers dollarsToPence:item.amount];
+        contentField.text = item.content;
         self.navigationItem.rightBarButtonItem.enabled = YES;
     } else {
         self.title = @"Add Item";
@@ -67,8 +63,7 @@
 #pragma mark Memory management
 
 - (void)dealloc {
-    [nameField release];
-    [amountField release];
+    [contentField release];
     [item release];
     [super dealloc];
 }
@@ -77,8 +72,7 @@
 #pragma mark Actions
 
 - (IBAction)save {
-    item.name = nameField.text;
-    item.amount = [CurrencyHelpers penceToDollars:amountField.text];
+    item.content = contentField.text;
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [[ConnectionManager sharedInstance] runJob:@selector(saveRemoteItem) 
@@ -94,7 +88,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView 
  numberOfRowsInSection:(NSInteger)section {
-    return 2;
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)aTableView 
@@ -104,11 +98,7 @@
         [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
                                 reuseIdentifier:nil] autorelease];
 
-    if (indexPath.row == 0)  {
-        [cell.contentView addSubview:nameField];	
-    } else { 
-        [cell.contentView addSubview:amountField];	
-    }
+    [cell.contentView addSubview:contentField];
     
     return cell;
 }
@@ -118,18 +108,13 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField { 
     [textField resignFirstResponder];
-	if (textField == nameField) {
-        [amountField becomeFirstResponder];
-    }
-	if (textField == amountField) {
-        [self save];
-    }
+	[self save];
 	return YES;
 }    
 
 - (IBAction)textFieldChanged:(id)sender {
     BOOL enableSaveButton = 
-        ([self.nameField.text length] > 0) && ([self.amountField.text length] > 0);
+        ([self.contentField.text length] > 0);
     [self.navigationItem.rightBarButtonItem setEnabled:enableSaveButton];
 }
 
@@ -152,21 +137,11 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
-- (UITextField *)newNameField {
+- (UITextField *)newContentField {
     UITextField *field = [UIHelpers newTableCellTextField:self];
-    field.placeholder = @"Name";
+    field.placeholder = @"Enter data";
     field.keyboardType = UIKeyboardTypeASCIICapable;
     field.returnKeyType = UIReturnKeyNext;
-    [field addTarget:self 
-              action:@selector(textFieldChanged:) 
-    forControlEvents:UIControlEventEditingChanged];
-    return field;
-}
-
-- (UITextField *)newAmountField {
-    UITextField *field = [UIHelpers newTableCellTextField:self];
-    field.placeholder = @"Amount";
-    field.keyboardType = UIKeyboardTypeNumberPad;
     [field addTarget:self 
               action:@selector(textFieldChanged:) 
     forControlEvents:UIControlEventEditingChanged];

@@ -16,13 +16,11 @@
 - (UITableViewCell *)makeAddItemCell:(UITableView *)tableView forRow:(NSUInteger)row;
 - (UITableViewCell *)makeTodoCell:(UITableView *)tableView forRow:(NSUInteger)row;
 - (UITextField *)newNameField;
-- (UITextField *)newAmountField;
 @end
 
 @implementation TodoDetailViewController
 
 @synthesize nameField;
-@synthesize amountField;
 @synthesize todo;
 @synthesize items;
 
@@ -51,7 +49,6 @@ enum TodoDetailTableSections {
     self.title = todo.name;
     
     nameField = [self newNameField];
-    amountField = [self newAmountField];
     
 	self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
@@ -73,7 +70,6 @@ enum TodoDetailTableSections {
 
 - (void)dealloc {
     [nameField release];
-    [amountField release];
     [todo release];
     [items release];
     
@@ -89,7 +85,6 @@ enum TodoDetailTableSections {
     [self.navigationItem setHidesBackButton:editing animated:YES];
 
 	nameField.enabled = editing;
-	amountField.enabled = editing;
     
 	[self.tableView beginUpdates];
 	
@@ -120,7 +115,6 @@ enum TodoDetailTableSections {
 	if (textField == nameField) {
 		todo.name = nameField.text;
 		self.title = todo.name;
-	} else if (textField == amountField) {
 	}
 	return YES;
 }
@@ -136,7 +130,7 @@ enum TodoDetailTableSections {
     NSInteger rows = 0;
     switch (section) {
         case kTodoSection:
-            rows = 2;
+            rows = 1;
             break;
         case kItemsSection:
             rows = [items count];
@@ -171,19 +165,19 @@ titleForHeaderInSection:(NSInteger)section {
 
     NSUInteger row = indexPath.row;
 
-    // For the Expenses section, create a cell for each expense.
+    // For the Items section, create a cell for each item.
     if (indexPath.section == kItemsSection) {
-		NSUInteger expensesCount = [items count];
-        if (row < expensesCount) {
+		NSUInteger itemsCount = [items count];
+        if (row < itemsCount) {
             cell = [self makeItemCell:tableView forRow:row];
         } 
-        // If the row is outside the range of the expenses, it's
+        // If the row is outside the range of the items, it's
         // the row that was added to allow insertion.
         else {
             cell = [self makeAddItemCell:tableView forRow:row];
         }
     }
-    // For the Budget section, create a cell for each text field.
+    // For the Todo section, create a cell for each text field.
     else {
         cell = [self makeTodoCell:tableView forRow:row];
     }
@@ -201,21 +195,21 @@ titleForHeaderInSection:(NSInteger)section {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == kItemsSection) {
-        Item *expense = nil;
+        Item *item = nil;
         if (indexPath.row < [items count]) {
-            expense = [items objectAtIndex:indexPath.row];
+            item = [items objectAtIndex:indexPath.row];
         } else {
-            expense = [[[Item alloc] init] autorelease];
-            expense.todoId = todo.todoId;
+            item = [[[Item alloc] init] autorelease];
+            item.todoId = todo.todoId;
         }
-        [self showItem:expense];
+        [self showItem:item];
 	}
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
 	UITableViewCellEditingStyle style = UITableViewCellEditingStyleNone;
     // Only allow editing in the Items section.  The last row
-    // was added automatically for adding a new expense.  All
+    // was added automatically for adding a new item.  All
     // other rows are eligible for deletion.
     if (indexPath.section == kItemsSection) {
         if (indexPath.row == [items count]) {
@@ -302,13 +296,12 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     }
     
     Item *item = [items objectAtIndex:row];
-    cell.textLabel.text = item.name;
-    cell.detailTextLabel.text = [item amountAsCurrency];
+    cell.textLabel.text = item.content;
     return cell;
 }
 
 - (UITableViewCell *)makeAddItemCell:(UITableView *)tableView forRow:(NSUInteger)row {
-    static NSString *AddItemCellId = @"AddExpenseCellId";
+    static NSString *AddItemCellId = @"AddItemCellId";
     
     UITableViewCell *cell = 
     [tableView dequeueReusableCellWithIdentifier:AddItemCellId];
@@ -317,24 +310,22 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
                                        reuseIdentifier:AddItemCellId] autorelease];
         cell.editingAccessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
-    cell.textLabel.text = @"Add Expense";   
+    cell.textLabel.text = @"Add Item";   
     return cell;
 }
 
 - (UITableViewCell *)makeTodoCell:(UITableView *)tableView forRow:(NSUInteger)row {
-    static NSString *BudgetCellId = @"BudgetCellId";
+    static NSString *TodoCellId = @"TodoCellId";
     
     UITableViewCell *cell = 
-    [tableView dequeueReusableCellWithIdentifier:BudgetCellId];
+    [tableView dequeueReusableCellWithIdentifier:TodoCellId];
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                       reuseIdentifier:BudgetCellId] autorelease];
+                                       reuseIdentifier:TodoCellId] autorelease];
     }
     
     if (row == 0)  {
         [cell.contentView addSubview:nameField];	
-    } else { 
-        [cell.contentView addSubview:amountField];	
     }
     
     return cell;
@@ -344,14 +335,6 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
     UITextField *field = [UIHelpers newTableCellTextField:self];
     field.text = todo.name;
     field.returnKeyType = UIReturnKeyDone;
-    field.enabled = NO;
-    return field;
-}
-
-- (UITextField *)newAmountField {
-    UITextField *field = [UIHelpers newTableCellTextField:self];
-	field.text = @"Test"; 
-    field.keyboardType = UIKeyboardTypeNumberPad;
     field.enabled = NO;
     return field;
 }
