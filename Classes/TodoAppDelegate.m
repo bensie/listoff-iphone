@@ -29,7 +29,7 @@
 
 - (void)configureObjectiveResource {    
 	[ObjectiveResourceConfig setSite:@"http://listoff.net/"];
-    [ObjectiveResourceConfig setResponseType:XmlResponse];
+    [ObjectiveResourceConfig setResponseType:JSONResponse];
     [ObjectiveResourceConfig setUser:self.user.login];
     [ObjectiveResourceConfig setPassword:self.user.password];
 }
