@@ -1,7 +1,5 @@
 #import "Item.h"
 
-#import "CurrencyHelpers.h"
-
 @implementation Item
 
 @synthesize itemId;
